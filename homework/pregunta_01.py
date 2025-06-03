@@ -71,3 +71,36 @@ def pregunta_01():
 
 
     """
+    # Librerias
+    import os
+    import zipfile
+    import os.path
+    import glob
+    import csv
+    
+    # Descomprimir la carpet input.zip
+    # with zipfile.ZipFile('./files/input.zip', 'r') as zip_ref:
+    #     zip_ref.extractall('./files')
+    # if not os.path.exists('./file/output'):
+    #     os.makedirs('./files/output')
+    
+    # Recorre las carpetas y los archivos 
+    inputs = ['test', 'train']
+    carpetas = ['negative', 'positive', 'neutral']
+    for input in inputs:
+        df = []  # reiniciar la lista para cada conjunto (test, train)
+        for carpeta in carpetas:
+            for file in glob.glob(f'./files/input/{input}/{carpeta}/*.txt'):
+                with open(file, 'r', encoding='utf-8') as textos:
+                    for f in textos:
+                        box = {
+                            'phrase': f.strip(),
+                            'target': carpeta
+                        }
+                        df.append(box)
+
+        with open(f'./files/output/{input}_dataset.csv', 'w', newline='', encoding='utf-8') as f:
+            columnas = df[0].keys()
+            writer = csv.DictWriter(f, fieldnames=columnas)
+            writer.writeheader()
+            writer.writerows(df)
